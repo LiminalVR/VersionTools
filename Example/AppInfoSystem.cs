@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using BuildTools;
+﻿using BuildTools;
 using UnityEngine;
 using UnityEngine.UI;
 
