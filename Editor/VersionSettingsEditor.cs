@@ -93,18 +93,52 @@ namespace BuildTools
 
         public void OnPostprocessBuild(BuildReport report)
         {
-            var guid = AssetDatabase.FindAssets($"t: {nameof(VersionSettings)}").FirstOrDefault();
-            var path = AssetDatabase.GUIDToAssetPath(guid);
-            var settings = AssetDatabase.LoadAssetAtPath<VersionSettings>(path);
+            var settings = VersionToolsEditorUtility.GetOrCreateScriptableInstance<VersionSettings>();
+
+            var options = VersionToolsEditorUtility.GetOrCreateScriptableInstance<VersionToolOptions>();
+            // if there's an instance of VersionToolOptions, and AppendVersionNumber is true
+            if (options?.AppendVersionNumber ?? false)
+            {
+                try
+                {
+                    bool appended = false;
+
+                    foreach (var file in report.files)
+                    {
+                        foreach (var fileEnding in options.FileEndings)
+                        {
+                            if (file.path.EndsWith($".{fileEnding}"))
+                            {
+                                EditorCoroutineUtility.StartCoroutineOwnerless(RenameBuildFile(settings.Version.ToString(), file.path, $".{fileEnding}"));
+                                appended = true;
+                                break;
+                            }
+
+                            if (appended) break;
+                        }
+                    }
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogException(e);
+                }
+            }
+
             EditorCoroutineUtility.StartCoroutineOwnerless(UpdateVersion(settings, fetch: true));
         }
 
         public void OnPreprocessBuild(BuildReport report)
         {
-            var guid = AssetDatabase.FindAssets($"t: {nameof(VersionSettings)}").FirstOrDefault();
-            var path = AssetDatabase.GUIDToAssetPath(guid);
-            var settings = AssetDatabase.LoadAssetAtPath<VersionSettings>(path);
+            var settings = VersionToolsEditorUtility.GetOrCreateScriptableInstance<VersionSettings>();
             EditorCoroutineUtility.StartCoroutineOwnerless(FetchVersion(settings));
+        }
+
+        private IEnumerator RenameBuildFile(string settingsNumber, string path, string fileEnd, float delay = 1f)
+        {
+            yield return new WaitForSeconds(delay);
+
+            string subPath = $"{path.Substring(0, path.Length - fileEnd.Length)}-{settingsNumber}{fileEnd}";
+            System.IO.File.Move(path, subPath);
         }
     }
 
