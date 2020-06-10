@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
-using Newtonsoft.Json;
 using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using UnityEditor.Build;
@@ -53,10 +52,10 @@ namespace BuildTools
                 {
                     var body = request.downloadHandler.data;
                     var text = request.downloadHandler.text;
-                    var model = JsonConvert.DeserializeObject<VersionRequestModel>(text);
-                    settings.Version.Major = model.Major;
-                    settings.Version.Minor = model.Minor;
-                    settings.Version.Revision = model.Revision;
+                    var model = JsonUtility.FromJson<VersionRequestModel>(text);
+                    settings.Version.Major = model.major;
+                    settings.Version.Minor = model.minor;
+                    settings.Version.Revision = model.revision;
                 }
             }
         }
@@ -71,13 +70,13 @@ namespace BuildTools
 
             var model = new VersionRequestModel
             {
-                BundleIdentifier = PlayerSettings.applicationIdentifier,
-                Major = settings.Version.Major,
-                Minor = settings.Version.Minor,
-                Revision = settings.Version.Revision,
+                bundleIdentifier = PlayerSettings.applicationIdentifier,
+                major = settings.Version.Major,
+                minor = settings.Version.Minor,
+                revision = settings.Version.Revision,
             };
 
-            var json = JsonConvert.SerializeObject(model, Formatting.Indented);
+            var json = JsonUtility.ToJson(model, true);
             using (var request = UnityWebRequest.Put(_endPoint, json))
             {
                 request.method = UnityWebRequest.kHttpVerbPOST;
@@ -108,7 +107,7 @@ namespace BuildTools
     [Serializable]
     public class VersionRequestModel
     {
-        public string BundleIdentifier;
-        public int Major, Minor, Revision;
+        public string bundleIdentifier;
+        public int major, minor, revision;
     }
 }
