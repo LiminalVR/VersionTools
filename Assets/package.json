@@ -1,0 +1,14 @@
+{
+    "name": "com.liminalvr.versiontools",
+    "version": "1.0.0",
+    "displayName": "Liminal Version Tools",
+    "description": "Standardised versioning for Liminal VR projects.",
+    "unity": "2019.3",
+    "dependencies": {
+      "com.unity.editorcoroutines": "1.0.0"
+   },
+    "author": {
+      "name": "LiminalVR",
+      "email": "info@liminalvr.com"
+    }
+  }
