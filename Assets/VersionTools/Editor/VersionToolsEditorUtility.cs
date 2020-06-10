@@ -9,13 +9,6 @@ namespace BuildTools
 {
     public static class VersionToolsEditorUtility
     {
-        [MenuItem("Version Tools/Create Instances")]
-        public static void CreateInstance()
-        {
-            GetOrCreateScriptableInstance<VersionToolOptions>();
-            GetOrCreateScriptableInstance<VersionSettings>();
-        }
-
         public static T GetOrCreateScriptableInstance<T>() where T : UnityEngine.ScriptableObject
         {
             T returningInstance = null;
