@@ -93,13 +93,17 @@ namespace BuildTools
 
         public void OnPostprocessBuild(BuildReport report)
         {
-            var settings = Resources.FindObjectsOfTypeAll<VersionSettings>().FirstOrDefault();
+            var guid = AssetDatabase.FindAssets($"t: {nameof(VersionSettings)}").FirstOrDefault();
+            var path = AssetDatabase.GUIDToAssetPath(guid);
+            var settings = AssetDatabase.LoadAssetAtPath<VersionSettings>(path);
             EditorCoroutineUtility.StartCoroutineOwnerless(UpdateVersion(settings, fetch: true));
         }
 
         public void OnPreprocessBuild(BuildReport report)
         {
-            var settings = Resources.FindObjectsOfTypeAll<VersionSettings>().FirstOrDefault();
+            var guid = AssetDatabase.FindAssets($"t: {nameof(VersionSettings)}").FirstOrDefault();
+            var path = AssetDatabase.GUIDToAssetPath(guid);
+            var settings = AssetDatabase.LoadAssetAtPath<VersionSettings>(path);
             EditorCoroutineUtility.StartCoroutineOwnerless(FetchVersion(settings));
         }
     }
