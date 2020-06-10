@@ -13,7 +13,7 @@ namespace BuildTools
     [CustomEditor(typeof(VersionSettings))]
     public class VersionSettingsEditor : Editor, IPreprocessBuildWithReport, IPostprocessBuildWithReport
     {
-        private string _endPoint = "http://staging.api.liminalvr.com/api/version/";
+        private static string _endPoint = "http://staging.api.liminalvr.com/api/version/";
 
         public override void OnInspectorGUI()
         {
@@ -34,7 +34,7 @@ namespace BuildTools
             GUILayout.EndHorizontal();
         }
 
-        private IEnumerator FetchVersion(VersionSettings settings)
+        private static IEnumerator FetchVersion(VersionSettings settings)
         {
             var url = $"{_endPoint}bundleIdentifier/{PlayerSettings.applicationIdentifier}";
             using (var request = UnityWebRequest.Get(url))
@@ -60,7 +60,7 @@ namespace BuildTools
             }
         }
 
-        private IEnumerator UpdateVersion(VersionSettings settings, bool fetch = false)
+        private static IEnumerator UpdateVersion(VersionSettings settings, bool fetch = false)
         {
             if (fetch)
             {
@@ -90,6 +90,13 @@ namespace BuildTools
         }
 
         public int callbackOrder { get; }
+
+        [InitializeOnLoadMethod]
+        public static void OnProjectLoaded()
+        {
+            EditorCoroutineUtility.StartCoroutineOwnerless(FetchVersion(VersionToolsEditorUtility.GetOrCreateScriptableInstance<VersionSettings>()));
+            VersionToolsEditorUtility.GetOrCreateScriptableInstance<VersionToolOptions>();
+        }
 
         public void OnPostprocessBuild(BuildReport report)
         {
@@ -133,7 +140,7 @@ namespace BuildTools
             EditorCoroutineUtility.StartCoroutineOwnerless(FetchVersion(settings));
         }
 
-        private IEnumerator RenameBuildFile(string settingsNumber, string path, string fileEnd, float delay = 1f)
+        private static IEnumerator RenameBuildFile(string settingsNumber, string path, string fileEnd, float delay = 1f)
         {
             yield return new WaitForSeconds(delay);
 
