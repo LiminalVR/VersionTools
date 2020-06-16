@@ -60,5 +60,8 @@ sysinfo.txt
 crashlytics-build.properties
 
 # Specific Assets
+Settings.meta
 VersionSettings.asset
+VersionSettings.asset.meta
 VersionToolOptions.asset
+VersionToolOptions.asset.meta

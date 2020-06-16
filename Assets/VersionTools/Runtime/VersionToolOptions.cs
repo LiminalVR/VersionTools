@@ -9,7 +9,7 @@ namespace BuildTools
 	{
 		#region Variables
 		#region Fields
-		[SerializeField] private bool _appendVersionNumber = false;
+		[SerializeField] private bool _appendVersionNumber = true;
 
 		[SerializeField] private string[] _appendToFilesWithEndings = new string[] 
 		{ 
